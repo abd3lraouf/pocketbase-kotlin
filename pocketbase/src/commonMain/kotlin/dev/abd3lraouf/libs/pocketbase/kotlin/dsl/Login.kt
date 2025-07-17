@@ -1,0 +1,38 @@
+package dev.abd3lraouf.libs.pocketbase.kotlin.dsl
+
+import dev.abd3lraouf.libs.pocketbase.kotlin.PocketKtDSL
+import dev.abd3lraouf.libs.pocketbase.kotlin.PocketbaseClient
+import dev.abd3lraouf.libs.pocketbase.kotlin.PocketbaseException
+
+@PocketKtDSL
+public class TokenLoginBuilder(
+    initialToken: String?,
+) {
+    @PocketKtDSL
+    /** The Pocketbase login token */
+    public var token: String? = initialToken
+}
+
+@PocketKtDSL
+/**
+ * Logs into the Pocketbase client with the specified token. This is
+ * required before making any API requests that require authentication.
+ *
+ * @param initialToken The auth token to login in to the client with if you
+ *    do not use the builder.
+ */
+public inline fun PocketbaseClient.login(
+    initialToken: String? = null,
+    setup: TokenLoginBuilder.() -> Unit = {},
+) {
+    val store = this.authStore
+    val loginBuilder = TokenLoginBuilder(initialToken ?: store.token)
+    loginBuilder.setup()
+    this.authStore.save(loginBuilder.token)
+    if (store.token == null) throw PocketbaseException("Authorization cannot be null!")
+}
+
+/** Clears the current auth token from the auth store. */
+public fun PocketbaseClient.logout() {
+    this.authStore.clear()
+}
