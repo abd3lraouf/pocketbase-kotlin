@@ -15,15 +15,18 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
 
 public class LogService(
     client: PocketbaseClient,
 ) : BaseService(client) {
     @Serializable
-    public data class HourlyStats(
-        val total: Int,
-        val date: InstantPocketbase,
-    )
+    public data class HourlyStats
+        @OptIn(ExperimentalTime::class)
+        constructor(
+            val total: Int,
+            val date: InstantPocketbase,
+        )
 
     /**
      * Returns a paginated log list.

@@ -192,7 +192,8 @@ format_commit_message() {
     local body=""
     if [[ ${#body_points[@]} -gt 0 ]]; then
         body="${body}## Overview\n\n"
-        body="${body}This commit ${description,,} for the ${scope} component.\n\n"
+        local lower_description=$(echo "$description" | tr '[:upper:]' '[:lower:]')
+        body="${body}This commit ${lower_description} for the ${scope} component.\n\n"
         body="${body}## Changes\n\n"
         
         for point in "${body_points[@]}"; do
